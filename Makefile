@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
 
-all: build-solution run-unit-tests docker-build-data-import docker-build-home
+all: build-solution run-unit-tests docker-build-data-import docker-build-home restart-custom-services
 	echo done
 
 build-solution:
@@ -18,6 +18,11 @@ docker-build-home:
 #make start-dependencies
 start-dependencies:
 	cd dependencies/; docker-compose up -d;
+
+#make restart-custom-services
+#Should fix this to use profiles in the docker-compose incase user wants to run custom services without docker
+restart-custom-services:
+	cd dependencies/; docker-compose restart home-service data-import-service || true
 
 #make stop-dependencies
 stop-dependencies:

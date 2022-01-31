@@ -136,6 +136,8 @@ services:
 
   #home-service:
   #  image: home-service
+  #  ports:
+  #    - "8881:8881"
   #  depends_on:
   #    - steeltoe-config
   #    - eureka-server
@@ -145,6 +147,8 @@ services:
   #    - kafka-3
   #data-import-service:
   #  image: data-import-service
+  #  ports:
+  #    - "8882:8882"
   #  depends_on:
   #    - steeltoe-config
   #    - eureka-server
