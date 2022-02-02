@@ -7,7 +7,7 @@ make
 * This requires:
 ** docker
 ** dotnet 6+
-** make Windows: (http://gnuwin32.sourceforge.net/packages/make.htm) otherwise use your linux package manager, eg: apt-get update && apt-get install -y make
+** make Windows: (https://community.chocolatey.org/packages/make) otherwise use your linux package manager, eg: apt-get update && apt-get install -y make
 
 
 # Run locally in docker
@@ -20,17 +20,17 @@ make start-dependencies
 # Run in VS
 Todo.
 
-## Navigate to the app
-[home] (http://localhost:8881)
-[data-import] (http://localhost:8882)
+## Navigate to the app 
+[home] (https://localhost:7096/)
+[data-import] (https://localhost:7139/)
 
 
 Scaffold for the app:
--Steeltoe
+-Steeltoe (done)
 -Something for metrics
--Docker compose file with dependencies
---kafka (And whatever else needed for kafka)
---postgres
+-Docker compose file with dependencies (done)
+--kafka (And whatever else needed for kafka) (Started)
+--postgres (Started)
 --external config
 -2 services
 -- Data import
