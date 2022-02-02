@@ -102,12 +102,12 @@ services:
     command: --spring.profiles.active=native --spring.cloud.config.server.native.searchLocations=/config
     ports:
       - "8888:8888"
-    volumes:
-      - config-data:/config/
     #volumes:
-    #  - type: bind
-    #    source: ./src/config
-    #    target: /config
+    #  - config-data:/config/
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
   eureka-server:
     image: "steeltoeoss/eureka-server:latest"
     ports:

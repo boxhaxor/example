@@ -1,32 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Steeltoe.Extensions.Configuration.ConfigServer;
+using Microsoft.Extensions.Configuration;
+using common;
+using common.Model;
 
 namespace data_import.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class WeatherForecastController : SteelToeControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
+    private readonly IWeatherForcastService _forcastService;
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(
+        ILogger<WeatherForecastController> logger,
+        IWeatherForcastService weatherForcastService,
+        IConfiguration config, 
+        IOptionsSnapshot<ConfigServerData> configServerData, 
+        IOptionsSnapshot<ConfigServerClientSettingsOptions> confgServerSettings) : 
+        base(config, configServerData, confgServerSettings)
     {
         _logger = logger;
+        _forcastService = weatherForcastService;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        return this._forcastService.GetWeatherForNextDays(1,5);
     }
 }

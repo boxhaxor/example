@@ -21,6 +21,7 @@ start-dependencies:
 
 #make restart-custom-services
 #Should fix this to use profiles in the docker-compose incase user wants to run custom services without docker
+#Because of this, removed the custom services, just run with vscode.
 restart-custom-services:
 	cd dependencies/; docker-compose restart home-service data-import-service || true
 

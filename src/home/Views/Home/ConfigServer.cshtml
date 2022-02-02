@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Configuration Data returned from Spring Cloud Config Server";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Property Kafka.BootstrapServers=@ViewData["Kafka"]</h4>
+<h4>Property Postgres.Home.ConnectionString=@ViewData["HomeConnectionString"]</h4>
+<h4>Property Postgres.Data_import.ConnectionString=@ViewData["DataImportConnectionString"]</h4>
+<h4>Property bar=@ViewData["Bar"]</h4>
+<h4>Property foo=@ViewData["Foo"]</h4>
+<h4>Property info.url=@ViewData["Info.Url"]</h4>
+<h4>Property info.description=@ViewData["Info.Description"]</h4>
+<h4>ASPNETCORE_ENVIRONMENT=@ViewData["ASPNETCORE_ENVIRONMENT"]</h4>
