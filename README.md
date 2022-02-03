@@ -28,15 +28,15 @@ make start-dependencies
 
 Scaffold for the app:
 - Steeltoe (done)
-- Something for metrics
-- Data import service
-- home service
+- Something for metrics (Not done)
+- Data import service (done)
+- home service (done)
 
 
 Technologies:
-- Kafka
-- Postgres
-- Spring Config
+- Kafka (done)
+- Postgres (done)
+- Spring Config (done)
 
 Optional:
 - Unit tests (Created but they don't do much currently.  TODO)
