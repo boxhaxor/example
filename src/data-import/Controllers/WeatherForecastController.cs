@@ -9,21 +9,21 @@ namespace data_import.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : SteelToeControllerBase
+public class WeatherForecastController 
+    : ControllerBase
 {
     private readonly IWeatherForcastService _forcastService;
+    private readonly ISteelToeConfig<ConfigServerData> _steelToeConfig;
     private readonly ILogger<WeatherForecastController> _logger;
 
     public WeatherForecastController(
         ILogger<WeatherForecastController> logger,
         IWeatherForcastService weatherForcastService,
-        IConfiguration config, 
-        IOptionsSnapshot<ConfigServerData> configServerData, 
-        IOptionsSnapshot<ConfigServerClientSettingsOptions> confgServerSettings) : 
-        base(config, configServerData, confgServerSettings)
+        ISteelToeConfig<ConfigServerData> steelToeConfig)
     {
         _logger = logger;
         _forcastService = weatherForcastService;
+        this._steelToeConfig = steelToeConfig;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]

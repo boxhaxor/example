@@ -9,18 +9,17 @@ using System.Diagnostics;
 
 namespace home.Controllers;
 
-public class HomeController : SteelToeControllerBase
+public class HomeController : Controller
 {
+    private readonly ISteelToeConfig<ConfigServerData> _steelToeConfig;
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(
         ILogger<HomeController> logger,
-        IConfiguration config, 
-        IOptionsSnapshot<ConfigServerData> configServerData, 
-        IOptionsSnapshot<ConfigServerClientSettingsOptions> confgServerSettings) : 
-        base(config, configServerData, confgServerSettings)
+        ISteelToeConfig<ConfigServerData> steelToeConfig)
     {
         _logger = logger;
+        _steelToeConfig = steelToeConfig;
     }
 
     public IActionResult Index()
@@ -42,9 +41,9 @@ public class HomeController : SteelToeControllerBase
 
     public IActionResult Reload()
     {
-        if (Config != null)
+        if (_steelToeConfig.Config != null)
         {
-            Config.Reload();
+            _steelToeConfig.Config.Reload();
         }
 
         return View();
@@ -56,15 +55,25 @@ public class HomeController : SteelToeControllerBase
         return View();
     }
 
+    public IActionResult UploadData()
+    {
+        UploadDataViewModel model = new UploadDataViewModel();
+        if (_steelToeConfig.IConfigServerData != null && _steelToeConfig.IConfigServerData.Value != null) {
+            var data = _steelToeConfig.IConfigServerData.Value;
+            model.DataUploadServiceUrl = data.DataImportService.Url ?? "Not returned";
+        }
+        return View(model);
+    }
+
     private void CreateConfigServerDataViewData()
     {
 
         ViewData["ASPNETCORE_ENVIRONMENT"] = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         // IConfigServerData property is set to a IOptionsSnapshot<ConfigServerData> that has been
         // initialized with the configuration data returned from the Spring Cloud Config Server
-        if (IConfigServerData != null && IConfigServerData.Value != null)
+        if (_steelToeConfig.IConfigServerData != null && _steelToeConfig.IConfigServerData.Value != null)
         {
-            var data = IConfigServerData.Value;
+            var data = _steelToeConfig.IConfigServerData.Value;
             ViewData["Bar"] = data.Bar ?? "Not returned";
             ViewData["Foo"] = data.Foo ?? "Not returned";
 
@@ -90,5 +99,5 @@ public class HomeController : SteelToeControllerBase
 
     }
 
-    public IActionResult ConfigServerSettings() => View(ConfigServerClientSettingsOptions);
+    public IActionResult ConfigServerSettings() => View(_steelToeConfig.ConfigServerClientSettingsOptions);
 }

@@ -6,14 +6,16 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+dataImportService:
+  url: https://localhost:7139
+
 postgres:
   home:
     connectionString: Host=localhost;Database=home;Username=docker;Password=docker_pass
   data_import:
     connectionString: Host=localhost;Database=data_import;Username=docker;Password=docker_pass
-
 kafka:
-  bootstrapServers: localhost:19092,localhost:29092,localhost:39092
+  bootstrapServers: localhost:9092
 
 foo: baz
 bar: woo

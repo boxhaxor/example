@@ -16,7 +16,11 @@ public class ConfigServerData
     public Info Info { get; set; }
     public Postgres Postgres { get;set; }
     public Kafka Kafka { get;set; }
+    public ServiceConfig DataImportService {get;set;}
+}
 
+public class ServiceConfig {
+    public string Url {get;set;}
 }
 
 public class Kafka {

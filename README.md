@@ -4,10 +4,11 @@
 ```
 make
 ```
-* This requires:
-** docker
-** dotnet 6+
-** make Windows: (https://community.chocolatey.org/packages/make) otherwise use your linux package manager, eg: apt-get update && apt-get install -y make
+# This requires:
+- docker
+- dotnet 6+
+- ef cli (dotnet tool install --global dotnet-ef)  or (dotnet tool update --global dotnet-ef)
+- make -- For Windows: (https://community.chocolatey.org/packages/make) otherwise use your linux package manager, eg: apt-get update && apt-get install -y make
 
 
 # Run locally in docker
@@ -18,7 +19,7 @@ make start-dependencies
 ```
 
 # Run in VS
-Todo.
+- Todo.
 
 ## Navigate to the app 
 [home] (https://localhost:7096/)
@@ -26,24 +27,16 @@ Todo.
 
 
 Scaffold for the app:
--Steeltoe (done)
--Something for metrics
--Docker compose file with dependencies (done)
---kafka (And whatever else needed for kafka) (Started)
---postgres (Started)
---external config
--2 services
--- Data import
--- home service
-
+- Steeltoe (done)
+- Something for metrics
+- Data import service
+- home service
 
 
 Technologies:
-Kafka
-Postgres
-steeltoe
+- Kafka
+- Postgres
+- Spring Config
 
 Optional:
-External Configuration ?  What's the default here for steeltoe?
-Unit tests
--I'll at least setup a project for it.
+- Unit tests (Created but they don't do much currently.  TODO)

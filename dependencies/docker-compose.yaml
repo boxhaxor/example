@@ -1,86 +1,48 @@
 ---
-version: '2'
+version: '3'
 services:
-  zookeeper-1:
+  zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: 22181
+      ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
-    network_mode: host
-    extra_hosts:
-      - "moby:127.0.0.1"
 
-  zookeeper-2:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 32181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
-    network_mode: host
-    extra_hosts:
-      - "moby:127.0.0.1"
-
-  zookeeper-3:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 42181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-      ZOOKEEPER_SERVERS: localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
-    network_mode: host
-    extra_hosts:
-      - "moby:127.0.0.1"
-
-  kafka-1:
+  broker:
     image: confluentinc/cp-kafka:latest
-    network_mode: host
+    container_name: broker
+    ports:
+    # To learn about configuring Kafka for access across networks see
+    # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
+      - "9092:9092"
     depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
+      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: localhost:22181,localhost:32181,localhost:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:19092
-    extra_hosts:
-      - "moby:127.0.0.1"
-
-  kafka-2:
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  init-kafka:
     image: confluentinc/cp-kafka:latest
-    network_mode: host
     depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: localhost:22181,localhost:32181,localhost:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092
-    extra_hosts:
-      - "moby:127.0.0.1"
+      - broker
+      - zookeeper
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:19092,kafka:29092,kafka:39092 --list
 
-  kafka-3:
-    image: confluentinc/cp-kafka:latest
-    network_mode: host
-    depends_on:
-      - zookeeper-1
-      - zookeeper-2
-      - zookeeper-3
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: localhost:22181,localhost:32181,localhost:42181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:39092
-    extra_hosts:
-      - "moby:127.0.0.1"
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:19092,kafka:29092,kafka:39092 --create --if-not-exists --topic topic --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:19092,kafka:29092,kafka:39092 --create --if-not-exists --topic topic-2 --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:19092,kafka:29092,kafka:39092 --list
+      "
   database:
     image: "postgres:12.9-alpine"
     restart: always

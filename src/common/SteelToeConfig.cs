@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Steeltoe.Extensions.Configuration.ConfigServer;
 using Microsoft.Extensions.Configuration;
 using common.Model;
-using System;
 
 namespace common;
 
-public class SteelToeControllerBase : Controller
+public interface ISteelToeConfig<T> where T : class
 {
-    protected IOptionsSnapshot<ConfigServerData> IConfigServerData { get; set; }
+    IOptionsSnapshot<T> IConfigServerData {get;set;}
+    IConfigurationRoot Config { get; set; }
+    ConfigServerClientSettingsOptions ConfigServerClientSettingsOptions { get; set; }
+}
+public class SteelToeConfig: ISteelToeConfig<ConfigServerData>
+{
+    public IOptionsSnapshot<ConfigServerData> IConfigServerData { get; set; }
 
-    protected ConfigServerClientSettingsOptions ConfigServerClientSettingsOptions { get; set; }
+    public ConfigServerClientSettingsOptions ConfigServerClientSettingsOptions { get; set; }
 
-    protected IConfigurationRoot Config { get; set; }
-    public SteelToeControllerBase(IConfiguration config, IOptionsSnapshot<ConfigServerData> configServerData, IOptionsSnapshot<ConfigServerClientSettingsOptions> confgServerSettings)
+    public IConfigurationRoot Config { get; set; }
+    public SteelToeConfig(IConfiguration config, IOptionsSnapshot<ConfigServerData> configServerData, IOptionsSnapshot<ConfigServerClientSettingsOptions> confgServerSettings)
     {
         // The ASP.NET DI mechanism injects the data retrieved from the Spring Cloud Config Server 
         // as an IOptionsSnapshot<ConfigServerData>. This happens because we added the call to:
